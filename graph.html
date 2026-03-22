@@ -1,0 +1,163 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 550px;
+                 background-color: #0a0a0a;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"font": {"color": "white"}, "group": "offense", "id": "Theft From Motor Vehicle ", "label": "Theft From Motor Vehicle ", "shape": "dot", "size": 20}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Lyndale", "label": "Lyndale", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Keewaydin", "label": "Keewaydin", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Midtown Phillips", "label": "Midtown Phillips", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Near - North", "label": "Near - North", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Steven\u0027s Square - Loring Heights", "label": "Steven\u0027s Square - Loring Heights", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Lowry Hill East", "label": "Lowry Hill East", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Windom", "label": "Windom", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Prospect Park - East River Road", "label": "Prospect Park - East River Road", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Whittier", "label": "Whittier", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Lynnhurst", "label": "Lynnhurst", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "date", "id": "2025-02-04", "label": "2025-02-04", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Ericsson", "label": "Ericsson", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Diamond Lake", "label": "Diamond Lake", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Cedar - Isles - Dean", "label": "Cedar - Isles - Dean", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "offense", "id": "Motor Vehicle Theft ", "label": "Motor Vehicle Theft ", "shape": "dot", "size": 20}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Holland", "label": "Holland", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Hawthorne", "label": "Hawthorne", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Downtown West", "label": "Downtown West", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "King Field", "label": "King Field", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Northrop", "label": "Northrop", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Hiawatha", "label": "Hiawatha", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "East Phillips", "label": "East Phillips", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Waite Park", "label": "Waite Park", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Downtown East", "label": "Downtown East", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "South Uptown", "label": "South Uptown", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Wenonah", "label": "Wenonah", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Minnehaha", "label": "Minnehaha", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Harrison", "label": "Harrison", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Jordan", "label": "Jordan", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Longfellow", "label": "Longfellow", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Seward", "label": "Seward", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "date", "id": "2025-02-02", "label": "2025-02-02", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "group": "date", "id": "2025-01-14", "label": "2025-01-14", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "group": "date", "id": "2025-02-05", "label": "2025-02-05", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "group": "date", "id": "2025-01-15", "label": "2025-01-15", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "group": "date", "id": "2025-01-19", "label": "2025-01-19", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "group": "date", "id": "2025-01-20", "label": "2025-01-20", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "group": "date", "id": "2025-01-30", "label": "2025-01-30", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "group": "date", "id": "2025-01-16", "label": "2025-01-16", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "group": "offense", "id": "Theft of Motor Vehicle Parts or Accessories ", "label": "Theft of Motor Vehicle Parts or Accessories ", "shape": "dot", "size": 20}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Bryant", "label": "Bryant", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "East Harriet", "label": "East Harriet", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Loring Park", "label": "Loring Park", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Cooper", "label": "Cooper", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Webber - Camden", "label": "Webber - Camden", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "neighborhood", "id": "Powderhorn Park", "label": "Powderhorn Park", "shape": "dot", "size": 15}, {"font": {"color": "white"}, "group": "date", "id": "2025-01-17", "label": "2025-01-17", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "group": "date", "id": "2025-02-03", "label": "2025-02-03", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "group": "date", "id": "2025-02-08", "label": "2025-02-08", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "group": "date", "id": "2024-12-22", "label": "2024-12-22", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "group": "date", "id": "2025-01-18", "label": "2025-01-18", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "group": "date", "id": "2025-02-06", "label": "2025-02-06", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "group": "date", "id": "2024-12-24", "label": "2024-12-24", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "group": "date", "id": "2024-12-25", "label": "2024-12-25", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "group": "date", "id": "2025-01-21", "label": "2025-01-21", "shape": "dot", "size": 10}, {"font": {"color": "white"}, "group": "date", "id": "2025-01-31", "label": "2025-01-31", "shape": "dot", "size": 10}]);
+                  edges = new vis.DataSet([{"from": "Theft From Motor Vehicle ", "to": "Lyndale", "width": 1}, {"from": "Theft From Motor Vehicle ", "to": "Keewaydin", "width": 1}, {"from": "Theft From Motor Vehicle ", "to": "Midtown Phillips", "width": 1}, {"from": "Theft From Motor Vehicle ", "to": "Near - North", "width": 1}, {"from": "Theft From Motor Vehicle ", "to": "Steven\u0027s Square - Loring Heights", "width": 1}, {"from": "Theft From Motor Vehicle ", "to": "Lowry Hill East", "width": 1}, {"from": "Theft From Motor Vehicle ", "to": "Windom", "width": 1}, {"from": "Theft From Motor Vehicle ", "to": "Prospect Park - East River Road", "width": 1}, {"from": "Theft From Motor Vehicle ", "to": "Whittier", "width": 1}, {"from": "Theft From Motor Vehicle ", "to": "Lynnhurst", "width": 1}, {"from": "Lyndale", "to": "2025-02-04", "width": 1}, {"from": "2025-02-04", "to": "Ericsson", "width": 1}, {"from": "2025-02-04", "to": "Whittier", "width": 1}, {"from": "2025-02-04", "to": "Diamond Lake", "width": 1}, {"from": "2025-02-04", "to": "Cedar - Isles - Dean", "width": 1}, {"from": "Motor Vehicle Theft ", "to": "Holland", "width": 1}, {"from": "Motor Vehicle Theft ", "to": "Steven\u0027s Square - Loring Heights", "width": 1}, {"from": "Motor Vehicle Theft ", "to": "Ericsson", "width": 1}, {"from": "Motor Vehicle Theft ", "to": "Hawthorne", "width": 1}, {"from": "Motor Vehicle Theft ", "to": "Downtown West", "width": 1}, {"from": "Motor Vehicle Theft ", "to": "King Field", "width": 1}, {"from": "Motor Vehicle Theft ", "to": "Northrop", "width": 1}, {"from": "Motor Vehicle Theft ", "to": "Near - North", "width": 1}, {"from": "Motor Vehicle Theft ", "to": "Hiawatha", "width": 1}, {"from": "Motor Vehicle Theft ", "to": "East Phillips", "width": 1}, {"from": "Motor Vehicle Theft ", "to": "Waite Park", "width": 1}, {"from": "Motor Vehicle Theft ", "to": "Downtown East", "width": 1}, {"from": "Motor Vehicle Theft ", "to": "South Uptown", "width": 1}, {"from": "Motor Vehicle Theft ", "to": "Wenonah", "width": 1}, {"from": "Motor Vehicle Theft ", "to": "Whittier", "width": 1}, {"from": "Motor Vehicle Theft ", "to": "Minnehaha", "width": 1}, {"from": "Motor Vehicle Theft ", "to": "Lowry Hill East", "width": 1}, {"from": "Motor Vehicle Theft ", "to": "Harrison", "width": 1}, {"from": "Motor Vehicle Theft ", "to": "Cedar - Isles - Dean", "width": 1}, {"from": "Motor Vehicle Theft ", "to": "Jordan", "width": 1}, {"from": "Motor Vehicle Theft ", "to": "Longfellow", "width": 1}, {"from": "Motor Vehicle Theft ", "to": "Seward", "width": 1}, {"from": "Holland", "to": "2025-02-02", "width": 1}, {"from": "2025-02-02", "to": "Steven\u0027s Square - Loring Heights", "width": 1}, {"from": "Steven\u0027s Square - Loring Heights", "to": "2025-01-14", "width": 1}, {"from": "Steven\u0027s Square - Loring Heights", "to": "2025-02-05", "width": 1}, {"from": "Steven\u0027s Square - Loring Heights", "to": "2025-01-15", "width": 1}, {"from": "Steven\u0027s Square - Loring Heights", "to": "2025-01-19", "width": 1}, {"from": "Steven\u0027s Square - Loring Heights", "to": "2025-01-20", "width": 1}, {"from": "Hawthorne", "to": "2025-02-05", "width": 1}, {"from": "Hawthorne", "to": "2025-01-30", "width": 1}, {"from": "Downtown West", "to": "2025-01-16", "width": 1}, {"from": "2025-01-16", "to": "Downtown East", "width": 1}, {"from": "2025-01-16", "to": "Lowry Hill East", "width": 1}, {"from": "2025-01-16", "to": "Whittier", "width": 1}, {"from": "2025-01-16", "to": "Harrison", "width": 1}, {"from": "King Field", "to": "2025-01-14", "width": 1}, {"from": "Theft of Motor Vehicle Parts or Accessories ", "to": "Bryant", "width": 1}, {"from": "Theft of Motor Vehicle Parts or Accessories ", "to": "East Harriet", "width": 1}, {"from": "Theft of Motor Vehicle Parts or Accessories ", "to": "Loring Park", "width": 1}, {"from": "Theft of Motor Vehicle Parts or Accessories ", "to": "Cooper", "width": 1}, {"from": "Theft of Motor Vehicle Parts or Accessories ", "to": "Webber - Camden", "width": 1}, {"from": "Theft of Motor Vehicle Parts or Accessories ", "to": "Diamond Lake", "width": 1}, {"from": "Theft of Motor Vehicle Parts or Accessories ", "to": "Powderhorn Park", "width": 1}, {"from": "Theft of Motor Vehicle Parts or Accessories ", "to": "Keewaydin", "width": 1}, {"from": "Bryant", "to": "2025-01-15", "width": 1}, {"from": "2025-01-15", "to": "Northrop", "width": 1}, {"from": "2025-01-15", "to": "Near - North", "width": 1}, {"from": "Northrop", "to": "2025-01-17", "width": 1}, {"from": "Near - North", "to": "2025-02-03", "width": 1}, {"from": "2025-02-03", "to": "Hiawatha", "width": 1}, {"from": "2025-02-03", "to": "Webber - Camden", "width": 1}, {"from": "Hiawatha", "to": "2025-02-08", "width": 1}, {"from": "East Phillips", "to": "2025-01-30", "width": 1}, {"from": "2025-01-30", "to": "Keewaydin", "width": 1}, {"from": "2025-01-30", "to": "Waite Park", "width": 1}, {"from": "2025-01-30", "to": "Longfellow", "width": 1}, {"from": "Keewaydin", "to": "2025-01-17", "width": 1}, {"from": "Midtown Phillips", "to": "2024-12-22", "width": 1}, {"from": "Lowry Hill East", "to": "2025-01-19", "width": 1}, {"from": "East Harriet", "to": "2025-01-17", "width": 1}, {"from": "2025-01-17", "to": "Lynnhurst", "width": 1}, {"from": "South Uptown", "to": "2025-01-18", "width": 1}, {"from": "South Uptown", "to": "2025-02-06", "width": 1}, {"from": "2025-01-18", "to": "Wenonah", "width": 1}, {"from": "2025-01-18", "to": "Minnehaha", "width": 1}, {"from": "2025-01-18", "to": "Cooper", "width": 1}, {"from": "Loring Park", "to": "2024-12-24", "width": 1}, {"from": "2024-12-24", "to": "Prospect Park - East River Road", "width": 1}, {"from": "Windom", "to": "2024-12-25", "width": 1}, {"from": "Whittier", "to": "2025-02-06", "width": 1}, {"from": "Whittier", "to": "2025-01-21", "width": 1}, {"from": "Jordan", "to": "2025-01-31", "width": 1}, {"from": "2025-01-21", "to": "Seward", "width": 1}, {"from": "2025-01-21", "to": "Powderhorn Park", "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "repulsion": {
+            "centralGravity": 0.2,
+            "damping": 0.09,
+            "nodeDistance": 150,
+            "springConstant": 0.05,
+            "springLength": 200
+        },
+        "solver": "repulsion",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

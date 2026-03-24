@@ -1,0 +1,7 @@
+data/minneapolis_crimes_cache.csv
+data/*.parquet
+__pycache__/
+**/__pycache__/
+*.pyc
+venv/
+.DS_Store

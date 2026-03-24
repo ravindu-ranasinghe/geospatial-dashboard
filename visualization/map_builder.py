@@ -131,6 +131,11 @@ def build_map(
     # Basemaps
     folium.TileLayer("CartoDB Positron", name="Light Basemap").add_to(m)
     folium.TileLayer("CartoDB DarkMatter", name="Dark Basemap").add_to(m)
+    folium.TileLayer(
+        tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        attr="Esri World Imagery",
+        name="Satellite",
+    ).add_to(m)
 
     # --- Layer 1: HeatMap ---
     heat_fg = folium.FeatureGroup(name="Crime Density Heatmap", show=True)

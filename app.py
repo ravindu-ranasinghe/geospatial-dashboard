@@ -1,44 +1,44 @@
 import streamlit as st
+import streamlit.components.v1 as components
 from streamlit_folium import st_folium
-from data.fetch import fetch_minneapolis_crimes
-from map import build_map, offense_color
+import pandas as pd
+
+from data.loader import load_crimes
+from processing.filters import (
+    apply_search,
+    filter_by_date,
+    filter_by_neighborhood,
+    filter_by_type,
+)
+from visualization.graph_builder import build_graph
+from visualization.map_builder import build_map
 
 st.set_page_config(page_title="GeoINT Dashboard", layout="wide")
 st.title("Minneapolis Crime Intelligence Dashboard")
 
-@st.cache_data
-def load_data():
-    return fetch_minneapolis_crimes(limit=2000)
 
-df = load_data()
+@st.cache_data
+def get_data() -> pd.DataFrame:
+    return load_crimes(limit=2000)
+
+
+df = get_data()
 
 with st.sidebar:
     st.header("Filters")
-
     neighborhoods = ["All"] + sorted(df["neighborhood"].dropna().unique().tolist())
     selected_neighborhood = st.selectbox("Neighborhood", neighborhoods)
-
     categories = ["All"] + sorted(df["offense"].dropna().unique().tolist())
     selected_offense = st.selectbox("Offense type", categories)
-
     date_range = st.date_input(
         "Date range",
-        value=[df["reportedDate"].min(), df["reportedDate"].max()]
+        value=[df["reportedDate"].min(), df["reportedDate"].max()],
     )
 
-filtered = df.copy()
-
-if selected_neighborhood != "All":
-    filtered = filtered[filtered["neighborhood"] == selected_neighborhood]
-
-if selected_offense != "All":
-    filtered = filtered[filtered["offense"] == selected_offense]
-
+filtered = filter_by_neighborhood(df, selected_neighborhood)
+filtered = filter_by_type(filtered, selected_offense)
 if len(date_range) == 2:
-    filtered = filtered[
-        (filtered["reportedDate"].dt.date >= date_range[0]) &
-        (filtered["reportedDate"].dt.date <= date_range[1])
-    ]
+    filtered = filter_by_date(filtered, date_range[0], date_range[1])
 
 col1, col2, col3 = st.columns(3)
 col1.metric("Total incidents", len(filtered))
@@ -49,23 +49,17 @@ st_folium(build_map(filtered), width=None, height=550, returned_objects=[])
 
 st.subheader("Raw data")
 st.dataframe(
-    filtered[["reportedDate", "offense", "neighborhood", "address"]].sort_values("reportedDate", ascending=False),
-    use_container_width=True
+    filtered[["reportedDate", "offense", "neighborhood", "address"]].sort_values(
+        "reportedDate", ascending=False
+    ),
+    use_container_width=True,
 )
 
 st.subheader("Hotspot search")
 search = st.text_input("Search neighborhood or offense", placeholder="e.g. Jordan, Weapon, Theft")
-
 if search:
-    mask = (
-        filtered["neighborhood"].str.contains(search, case=False, na=False) |
-        filtered["offense"].str.contains(search, case=False, na=False)
-    )
-    filtered = filtered[mask]
-    st.caption(f"{len(filtered)} incidents matching '{search}'")
-
-import streamlit.components.v1 as components
-from graph_view import build_graph
+    result = apply_search(filtered, search)
+    st.caption(f"{len(result)} incidents matching '{search}'")
 
 st.subheader("Entity link graph")
 st.caption("Red = offense type  |  Blue = neighborhood  |  Green = date")

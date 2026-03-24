@@ -193,7 +193,12 @@ def build_animated_heatmap(df: pd.DataFrame, mode: str = "monthly") -> folium.Ma
     Returns:
         A folium.Map with an auto-playing animated heatmap.
     """
-    m = folium.Map(location=_CENTER, zoom_start=12)
+    m = folium.Map(location=_CENTER, zoom_start=12, tiles=None)
+    folium.TileLayer(
+        tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        attr="Esri World Imagery",
+        name="Satellite",
+    ).add_to(m)
     tmp = df.dropna(subset=["lat", "long", "reportedDate"]).copy()
 
     heat_data: list[list[list[float]]] = []

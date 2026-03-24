@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Optional
 
 import folium
-from folium.plugins import HeatMap, MarkerCluster
+from folium.plugins import HeatMap, HeatMapWithTime, MarkerCluster
 import pandas as pd
 import requests
 
@@ -170,4 +170,56 @@ def build_map(
     _add_choropleth(m, df, geojson_path)
 
     folium.LayerControl(collapsed=False).add_to(m)
+    return m
+
+
+def _hour_label(hour: int) -> str:
+    if hour == 0:
+        return "12:00 AM"
+    if hour < 12:
+        return f"{hour}:00 AM"
+    if hour == 12:
+        return "12:00 PM"
+    return f"{hour - 12}:00 PM"
+
+
+def build_animated_heatmap(df: pd.DataFrame, mode: str = "monthly") -> folium.Map:
+    """Build an animated HeatMapWithTime.
+
+    Args:
+        df: crime DataFrame with lat, long, reportedDate columns.
+        mode: "monthly" steps through year-months; "hourly" steps through 0-23.
+
+    Returns:
+        A folium.Map with an auto-playing animated heatmap.
+    """
+    m = folium.Map(location=_CENTER, zoom_start=12)
+    tmp = df.dropna(subset=["lat", "long", "reportedDate"]).copy()
+
+    heat_data: list[list[list[float]]] = []
+    index: list[str] = []
+
+    if mode == "monthly":
+        tmp["period"] = tmp["reportedDate"].dt.to_period("M")
+        for period in sorted(tmp["period"].unique()):
+            subset = tmp[tmp["period"] == period]
+            heat_data.append(subset[["lat", "long"]].assign(w=1.0).values.tolist())
+            index.append(period.strftime("%b %Y"))
+
+    else:  # hourly
+        tmp["hour"] = tmp["reportedDate"].dt.hour
+        for hour in range(24):
+            subset = tmp[tmp["hour"] == hour]
+            heat_data.append(subset[["lat", "long"]].assign(w=1.0).values.tolist())
+            index.append(_hour_label(hour))
+
+    HeatMapWithTime(
+        heat_data,
+        index=index,
+        auto_play=True,
+        max_speed=10,
+        min_speed=1,
+        radius=15,
+    ).add_to(m)
+
     return m

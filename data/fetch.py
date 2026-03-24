@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pandas as pd
 
-def fetch_minneapolis_crimes(limit=2000):
+def fetch_minneapolis_crimes(limit=None):
     url = "https://opendata.arcgis.com/api/v3/datasets/441d4c0410854e3da692b24347ab6b0d_0/downloads/data?format=csv&spatialRefId=4326"
     cache_path = Path(__file__).resolve().parent / "minneapolis_crimes_cache.csv"
     source = "remote"
@@ -90,7 +90,8 @@ def fetch_minneapolis_crimes(limit=2000):
     })
 
     df["reportedDate"] = pd.to_datetime(df["reportedDate"], errors="coerce")
-    df = df.head(limit)
+    if limit is not None:
+        df = df.head(limit)
 
     print(f"Loaded {len(df)} records from {source}")
     print(df[["offense", "neighborhood", "lat", "long"]].head())

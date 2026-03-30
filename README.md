@@ -27,8 +27,7 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-Then open [http://localhost:8501](http://localhost:8501).
-
+Try it out: https://mncrime.streamlit.app/
 ## Data Source
 
 Crime incident data sourced from the [Minneapolis Police Department Open Data Portal](https://opendata.minneapolismn.gov/). The dataset includes reported incidents with coordinates, offense category, date, and neighborhood.
